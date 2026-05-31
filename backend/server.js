@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect("YOUR_MONGODB_CONNECTION_STRING")
+mongoose.connect("mongodb://admin:admin%40123@ac-dnccwve-shard-00-00.ofvms9j.mongodb.net:27017,ac-dnccwve-shard-00-01.ofvms9j.mongodb.net:27017,ac-dnccwve-shard-00-02.ofvms9j.mongodb.net:27017/portfolio?ssl=true&replicaSet=atlas-ahnz2y-shard-0&authSource=admin&retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
 .catch(err => console.log(err));
 
@@ -24,10 +24,9 @@ const taskSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 const Task = mongoose.model("Task", taskSchema);
 
-// Register
-app.post('/register', async (req,res)=>{
+app.post('/register', async (req, res) => {
 
-    const {email,password}=req.body;
+    const { email, password } = req.body;
 
     const user = new User({
         email,
@@ -37,15 +36,14 @@ app.post('/register', async (req,res)=>{
     await user.save();
 
     res.json({
-        message:"User Registered"
+        message: "User Registered"
     });
 
 });
 
-// Login
-app.post('/login', async (req,res)=>{
+app.post('/login', async (req, res) => {
 
-    const {email,password}=req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({
         email,
@@ -55,26 +53,25 @@ app.post('/login', async (req,res)=>{
     if(user){
 
         res.json({
-            success:true,
-            email:user.email,
-            message:"Login Success"
+            success: true,
+            email: user.email,
+            message: "Login Success"
         });
 
-    }else{
+    } else {
 
         res.json({
-            success:false,
-            message:"Invalid Credentials"
+            success: false,
+            message: "Invalid Credentials"
         });
 
     }
 
 });
 
-// Add Task
-app.post('/addTask', async (req,res)=>{
+app.post('/addTask', async (req, res) => {
 
-    const {email,title}=req.body;
+    const { email, title } = req.body;
 
     const task = new Task({
         email,
@@ -84,33 +81,31 @@ app.post('/addTask', async (req,res)=>{
     await task.save();
 
     res.json({
-        message:"Task Added"
+        message: "Task Added"
     });
 
 });
 
-// View Tasks
-app.get('/tasks/:email', async (req,res)=>{
+app.get('/tasks/:email', async (req, res) => {
 
     const tasks = await Task.find({
-        email:req.params.email
+        email: req.params.email
     });
 
     res.json(tasks);
 
 });
 
-// Delete Task
-app.delete('/deleteTask/:id', async (req,res)=>{
+app.delete('/deleteTask/:id', async (req, res) => {
 
     await Task.findByIdAndDelete(req.params.id);
 
     res.json({
-        message:"Task Deleted"
+        message: "Task Deleted"
     });
 
 });
 
-app.listen(5000,()=>{
+app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
